@@ -5,9 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Familien Outfit</title>
 
+<!-- HTML2CANVAS -->
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
-<!-- Cropper -->
+<!-- CROPPER -->
 <link rel="stylesheet" href="https://unpkg.com/cropperjs/dist/cropper.min.css">
 <script src="https://unpkg.com/cropperjs/dist/cropper.min.js"></script>
 
@@ -24,10 +25,6 @@ body {
     color: white;
     padding: 1.5rem;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-}
-
-/* FIX 1: abgeschnittene Schrift */
-body {
     line-height: 1.4;
 }
 
@@ -38,75 +35,96 @@ body {
     border: 1px solid #3f3f46;
     background-color: #17181d;
     padding: 1.5rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
 }
 
-/* HEADER */
 .header {
     margin-bottom: 1.5rem;
     border-bottom: 1px solid #3f3f46;
     padding-bottom: 1rem;
     display: flex;
+    align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 .header h1 {
     font-size: 2.25rem;
     font-weight: 700;
+    letter-spacing: 0.05em;
 }
 
-/* INPUTS */
-.header-input,
-.text-input,
-.textarea-input {
-    width: 100%;
-    background: rgba(39, 39, 42, 0.8);
-    border: 1px solid #52525b;
-    color: white;
-    border-radius: 0.6rem;
-    padding: 0.6rem 0.8rem;
+/* FIX Schrift */
+.text-input, .textarea-input {
+    line-height: 1.4;
 }
 
-/* BUTTONS */
+/* Buttons */
 .generate-wrapper {
     display: flex;
     justify-content: flex-end;
-    gap: 1rem;
     margin-bottom: 1.5rem;
+    gap: 1rem;
 }
 
 .generate-btn {
     background: white;
     color: black;
+    border: none;
     padding: 0.9rem 1.4rem;
     border-radius: 0.8rem;
+    font-size: 0.95rem;
     font-weight: 700;
     cursor: pointer;
 }
 
 /* GRID */
+.main-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+}
+
+@media (min-width: 1024px) {
+    .main-grid {
+        grid-template-columns: 3fr 1fr;
+    }
+}
+
 .looks-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 /* UPLOAD BOX */
 .upload-box {
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 1rem;
     border: 1px solid #3f3f46;
-    background-color: rgba(39,39,42,0.7);
-    height: 20rem;
+    background-color: rgba(39, 39, 42, 0.7);
+    cursor: pointer;
     overflow: hidden;
+    height: 20rem;
 }
 
-/* + FIX (Punkt 1 Problem) */
-.upload-box .plus {
-    font-size: 3rem;
-    font-weight: 700;
+.upload-box.h-52 {
+    height: 13rem;
 }
 
-/* IMAGE */
+.upload-box input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 20;
+}
+
 .upload-box img {
     position: absolute;
     inset: 0;
@@ -120,25 +138,45 @@ body {
     display: block;
 }
 
-/* PLACEHOLDER */
 .placeholder {
-    position: absolute;
-    inset: 0;
+    z-index: 10;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     pointer-events: none;
     color: #d4d4d8;
 }
 
-/* FIX EXPORT TEXT ONLY */
+.placeholder .plus {
+    font-size: 3rem;
+    font-weight: 700;
+}
+
+/* + FIX bleibt sichtbar */
 .export-mode input,
 .export-mode textarea {
     display: none !important;
 }
 
-/* CROPPER FIX */
+/* SCHERE ICON (FIX 2) */
+.crop-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 26px;
+    height: 26px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+    z-index: 50;
+}
+
+/* CROPPER MODAL */
 #cropModal {
     display: none;
     position: fixed;
@@ -153,18 +191,18 @@ body {
     background: #111;
     padding: 1rem;
     border-radius: 10px;
-    max-width: 90%;
 }
 
 #cropImage {
     max-width: 500px;
 }
+
 </style>
 </head>
 
 <body>
 
-<!-- FIX 4: RESET BUTTON -->
+<!-- FIX 4 RESET BUTTON -->
 <div class="generate-wrapper">
     <button class="generate-btn" onclick="resetAll()">RESET</button>
     <button class="generate-btn" onclick="generatePNG()">PNG GENERIEREN</button>
@@ -172,35 +210,80 @@ body {
 
 <div class="container" id="capture">
 
-<!-- FIX 6: Subtitle weg -->
+<!-- HEADER (FIX 6 entfernt Subtext) -->
 <div class="header">
     <h1>FAMILIEN OUTFIT</h1>
 
     <div>
-        <input id="familyName" class="header-input" placeholder="Familienname">
-        <input class="header-input" placeholder="Farbschema">
+        <input id="familyName" class="text-input header-input" placeholder="Familienname">
+        <input class="text-input header-input" placeholder="Farbschema">
     </div>
 </div>
 
+<!-- LOOKS -->
 <div class="looks-grid">
 
     <label class="upload-box">
+        <div class="crop-btn" onclick="openCrop(this)">✂</div>
         <input type="file" accept="image/*" onchange="handleUpload(this)">
         <img>
         <div class="placeholder"><div class="plus">+</div>LOOK 1</div>
     </label>
 
     <label class="upload-box">
+        <div class="crop-btn" onclick="openCrop(this)">✂</div>
         <input type="file" accept="image/*" onchange="handleUpload(this)">
         <img>
         <div class="placeholder"><div class="plus">+</div>LOOK 2</div>
     </label>
 
     <label class="upload-box">
+        <div class="crop-btn" onclick="openCrop(this)">✂</div>
         <input type="file" accept="image/*" onchange="handleUpload(this)">
         <img>
         <div class="placeholder"><div class="plus">+</div>LOOK 3</div>
     </label>
+
+</div>
+
+<!-- ALLGEMEINES + DETAIL + MERKMALE (NICHT ENTFERNT!) -->
+<div class="main-grid">
+
+    <div>
+
+        <div class="card">
+            <h2>ALLGEMEINES</h2>
+            <input class="text-input" placeholder="Pflichtteile definieren">
+            <input class="text-input" placeholder="Farbschema festlegen">
+            <input class="text-input" placeholder="Freie Kleidung">
+            <textarea class="textarea-input" placeholder="Regeln"></textarea>
+        </div>
+
+        <div class="card">
+            <h2>DETAILS</h2>
+
+            <label class="upload-box h-52">
+                <div class="crop-btn" onclick="openCrop(this)">✂</div>
+                <input type="file" onchange="handleUpload(this)">
+                <img>
+                <div class="placeholder"><div class="plus">+</div>DETAIL</div>
+            </label>
+        </div>
+
+    </div>
+
+    <div class="card">
+        <h2>MERKMALE</h2>
+
+        <input class="text-input" placeholder="Merkmal">
+        <textarea class="textarea-input" placeholder="Beschreibung"></textarea>
+
+        <input class="text-input" placeholder="Merkmal">
+        <textarea class="textarea-input" placeholder="Beschreibung"></textarea>
+
+        <input class="text-input" placeholder="Merkmal">
+        <textarea class="textarea-input" placeholder="Beschreibung"></textarea>
+    </div>
 
 </div>
 
@@ -219,9 +302,8 @@ body {
 <script>
 
 let cropper;
-let currentInput;
+let currentImage;
 
-/* FIX 2 + + ICON bleibt erhalten + Crop Button */
 function handleUpload(input) {
 
     const file = input.files[0];
@@ -231,33 +313,44 @@ function handleUpload(input) {
 
     reader.onload = e => {
 
-        currentInput = input;
-
-        const modal = document.getElementById('cropModal');
-        const img = document.getElementById('cropImage');
-
+        const img = input.parentElement.querySelector('img');
         img.src = e.target.result;
-        modal.style.display = 'flex';
-
-        if (cropper) cropper.destroy();
-
-        cropper = new Cropper(img, {
-            viewMode: 1,
-            autoCropArea: 1
-        });
+        img.classList.add('visible');
     };
 
     reader.readAsDataURL(file);
+}
+
+/* FIX 2: Crop über Schere */
+function openCrop(btn) {
+
+    const box = btn.parentElement;
+    const img = box.querySelector('img');
+
+    if (!img.src) return;
+
+    currentImage = img;
+
+    const modal = document.getElementById('cropModal');
+    const cropImg = document.getElementById('cropImage');
+
+    cropImg.src = img.src;
+    modal.style.display = 'flex';
+
+    if (cropper) cropper.destroy();
+
+    cropper = new Cropper(cropImg, {
+        viewMode: 1,
+        autoCropArea: 1
+    });
 }
 
 function applyCrop() {
 
     const canvas = cropper.getCroppedCanvas();
 
-    const img = currentInput.parentElement.querySelector('img');
-
-    img.src = canvas.toDataURL('image/png');
-    img.classList.add('visible');
+    currentImage.src = canvas.toDataURL('image/png');
+    currentImage.classList.add('visible');
 
     closeCrop();
 }
@@ -267,7 +360,7 @@ function closeCrop() {
     if (cropper) cropper.destroy();
 }
 
-/* FIX 4 RESET */
+/* RESET */
 function resetAll() {
     document.querySelectorAll('input, textarea').forEach(el => el.value = '');
     document.querySelectorAll('img').forEach(img => {
@@ -276,7 +369,7 @@ function resetAll() {
     });
 }
 
-/* FIX 3 + 5 PNG EXPORT */
+/* PNG EXPORT FIX */
 async function generatePNG() {
 
     const el = document.getElementById('capture');
@@ -296,7 +389,6 @@ async function generatePNG() {
     out.height = 1080;
 
     const ctx = out.getContext('2d');
-
     ctx.fillStyle = '#0f1013';
     ctx.fillRect(0,0,1920,1080);
     ctx.drawImage(canvas,0,0,1920,1080);
