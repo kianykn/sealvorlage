@@ -8,6 +8,10 @@
     <!-- HTML2CANVAS -->
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
+    <!-- CROPPERJS -->
+    <link rel="stylesheet" href="https://unpkg.com/cropperjs/dist/cropper.min.css">
+    <script src="https://unpkg.com/cropperjs/dist/cropper.min.js"></script>
+
     <style>
         * {
             margin: 0;
@@ -21,6 +25,7 @@
             color: white;
             padding: 1.5rem;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.4;
         }
 
         .container {
@@ -47,26 +52,11 @@
         .header h1 {
             font-size: 2.25rem;
             font-weight: 700;
-            letter-spacing: 0.05em;
-        }
-
-        .header p {
-            color: #a1a1aa;
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
         }
 
         .header-fields {
             display: flex;
             gap: 2rem;
-            font-size: 0.875rem;
-            color: #d4d4d8;
-        }
-
-        .header-field label {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-            display: block;
         }
 
         .header-input,
@@ -79,12 +69,9 @@
             border-radius: 0.6rem;
             padding: 0.6rem 0.8rem;
             font-size: 0.9rem;
-            outline: none;
         }
 
-        .header-input {
-            width: 10rem;
-        }
+        .header-input { width: 10rem; }
 
         .textarea-input {
             resize: vertical;
@@ -94,6 +81,7 @@
         .generate-wrapper {
             display: flex;
             justify-content: flex-end;
+            gap: 1rem;
             margin-bottom: 1.5rem;
         }
 
@@ -103,15 +91,8 @@
             border: none;
             padding: 0.9rem 1.4rem;
             border-radius: 0.8rem;
-            font-size: 0.95rem;
             font-weight: 700;
             cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .generate-btn:hover {
-            transform: translateY(-2px);
-            background: #e4e4e7;
         }
 
         .main-grid {
@@ -128,21 +109,14 @@
 
         .looks-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 1rem;
             margin-bottom: 1.5rem;
-        }
-
-        @media (min-width: 768px) {
-            .looks-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
         }
 
         .upload-box {
             position: relative;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             border-radius: 1rem;
@@ -150,14 +124,6 @@
             background-color: rgba(39, 39, 42, 0.7);
             cursor: pointer;
             overflow: hidden;
-            transition: background-color 0.2s;
-        }
-
-        .upload-box:hover {
-            background-color: rgba(63, 63, 70, 0.6);
-        }
-
-        .upload-box.h-80 {
             height: 20rem;
         }
 
@@ -165,12 +131,11 @@
             height: 13rem;
         }
 
-        .upload-box input[type="file"] {
+        .upload-box input {
             position: absolute;
             inset: 0;
             opacity: 0;
             cursor: pointer;
-            z-index: 20;
         }
 
         .upload-box img {
@@ -186,25 +151,10 @@
             display: block;
         }
 
-        .upload-box .placeholder {
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            pointer-events: none;
-            color: #d4d4d8;
-        }
-
-        .upload-box .placeholder .plus {
-            font-size: 3rem;
-            font-weight: 700;
-        }
-
-        .upload-box .placeholder .label {
-            font-size: 0.875rem;
-            letter-spacing: 0.05em;
+        .placeholder {
+            z-index: 2;
             text-align: center;
-            padding: 0 0.5rem;
+            color: #d4d4d8;
         }
 
         .bottom-section {
@@ -219,50 +169,11 @@
             }
         }
 
-        .card {
+        .card, .merkmale-card {
             border-radius: 1rem;
             border: 1px solid #3f3f46;
             background-color: rgba(39, 39, 42, 0.4);
             padding: 1.25rem;
-        }
-
-        .card h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: #f4f4f5;
-        }
-
-        .allgemeines-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-        }
-
-        .detail-section h2 {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 0.75rem;
-            color: #f4f4f5;
-        }
-
-        .details-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 0.75rem;
-        }
-
-        .merkmale-card {
-            border-radius: 1rem;
-            border: 1px solid #3f3f46;
-            background-color: rgba(39, 39, 42, 0.4);
-            padding: 1.25rem;
-        }
-
-        .merkmale-card h2 {
-            font-size: 1.875rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
         }
 
         .merkmale-list {
@@ -274,7 +185,6 @@
         .merkmal-item {
             display: flex;
             gap: 1rem;
-            align-items: flex-start;
         }
 
         .merkmal-avatar {
@@ -282,23 +192,11 @@
             height: 5rem;
             border-radius: 50%;
             overflow: hidden;
-            border: 1px solid #52525b;
-            flex-shrink: 0;
-            background-color: #3f3f46;
             position: relative;
-        }
-
-        .merkmal-avatar input[type="file"] {
-            position: absolute;
-            inset: 0;
-            opacity: 0;
-            cursor: pointer;
-            z-index: 20;
+            border: 1px solid #52525b;
         }
 
         .merkmal-avatar img {
-            position: absolute;
-            inset: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
@@ -309,256 +207,219 @@
             display: block;
         }
 
-        .merkmal-avatar .plus {
+        .merkmal-avatar input {
             position: absolute;
             inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: #d4d4d8;
-            font-weight: 700;
-            z-index: 10;
+            opacity: 0;
         }
 
-        .merkmal-info {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+        /* EXPORT FIX */
+        .export-mode input,
+        .export-mode textarea {
+            display: none !important;
+        }
+
+        /* Crop Modal */
+        #cropModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        #cropModal > div {
+            background: #111;
+            padding: 1rem;
+            border-radius: 10px;
+        }
+
+        #cropImage {
+            max-width: 500px;
         }
     </style>
 </head>
 
 <body>
 
-    <div class="generate-wrapper">
-        <button class="generate-btn" onclick="generatePNG()">
-            PNG GENERIEREN
-        </button>
+<div class="generate-wrapper">
+    <button class="generate-btn" onclick="resetAll()">RESET</button>
+    <button class="generate-btn" onclick="generatePNG()">PNG GENERIEREN</button>
+</div>
+
+<div class="container" id="capture">
+
+    <div class="header">
+        <h1>FAMILIEN OUTFIT</h1>
+
+        <div class="header-fields">
+            <input class="header-input" id="familyName" placeholder="Familienname">
+            <input class="header-input" placeholder="Farbschema">
+        </div>
     </div>
 
-    <div class="container" id="capture">
+    <div class="main-grid">
 
-        <div class="header">
-            <div>
-                <h1>FAMILIEN OUTFIT</h1>
-                <p>Vorlage für Familien & Fraktionen</p>
+        <div>
+
+            <div class="looks-grid">
+
+                <label class="upload-box">
+                    <input type="file" onchange="handleUpload(this)">
+                    <img>
+                    <div class="placeholder">LOOK 1</div>
+                </label>
+
+                <label class="upload-box">
+                    <input type="file" onchange="handleUpload(this)">
+                    <img>
+                    <div class="placeholder">LOOK 2</div>
+                </label>
+
+                <label class="upload-box">
+                    <input type="file" onchange="handleUpload(this)">
+                    <img>
+                    <div class="placeholder">LOOK 3</div>
+                </label>
+
             </div>
 
-            <div class="header-fields">
-                <div class="header-field">
-                    <label>Familienname</label>
-                    <input class="header-input" type="text">
+            <div class="bottom-section">
+
+                <div class="card">
+                    <input class="text-input" placeholder="Pflichtteile">
+                    <input class="text-input" placeholder="Farbschema">
+                    <textarea class="textarea-input" placeholder="Regeln"></textarea>
                 </div>
 
-                <div class="header-field">
-                    <label>Farbschema</label>
-                    <input class="header-input" type="text">
+                <div class="card">
+                    <h2>DETAILS</h2>
+                    <label class="upload-box h-52">
+                        <input type="file" onchange="handleUpload(this)">
+                        <img>
+                        <div class="placeholder">DETAIL</div>
+                    </label>
                 </div>
+
             </div>
         </div>
 
-        <div class="main-grid">
+        <div class="merkmale-card">
+            <h2>MERKMALE</h2>
 
-            <div>
+            <div class="merkmale-list">
 
-                <div class="looks-grid">
-
-                    <label class="upload-box h-80">
-                        <input type="file" accept="image/*" onchange="handleUpload(this)">
+                <div class="merkmal-item">
+                    <div class="merkmal-avatar">
+                        <input type="file" onchange="handleUpload(this)">
                         <img>
-                        <div class="placeholder">
-                            <div class="plus">+</div>
-                            <div class="label">LOOK 1</div>
-                        </div>
-                    </label>
-
-                    <label class="upload-box h-80">
-                        <input type="file" accept="image/*" onchange="handleUpload(this)">
-                        <img>
-                        <div class="placeholder">
-                            <div class="plus">+</div>
-                            <div class="label">LOOK 2</div>
-                        </div>
-                    </label>
-
-                    <label class="upload-box h-80">
-                        <input type="file" accept="image/*" onchange="handleUpload(this)">
-                        <img>
-                        <div class="placeholder">
-                            <div class="plus">+</div>
-                            <div class="label">LOOK 3</div>
-                        </div>
-                    </label>
-
+                    </div>
+                    <div>
+                        <input class="text-input" placeholder="Merkmal">
+                        <textarea class="textarea-input" placeholder="Beschreibung"></textarea>
+                    </div>
                 </div>
 
-                <div class="bottom-section">
-
-                    <div class="card">
-                        <h2>ALLGEMEINES</h2>
-
-                        <div class="allgemeines-list">
-                            <input class="text-input" type="text" placeholder="Pflichtteile definieren">
-                            <input class="text-input" type="text" placeholder="Farbschema festlegen">
-                            <input class="text-input" type="text" placeholder="Freie Kleidungswahl">
-                            <textarea class="textarea-input" placeholder="Besondere Regeln"></textarea>
-                        </div>
+                <div class="merkmal-item">
+                    <div class="merkmal-avatar">
+                        <input type="file" onchange="handleUpload(this)">
+                        <img>
                     </div>
-
-                    <div class="detail-section">
-                        <h2>DETAILBILDER</h2>
-
-                        <div class="details-grid">
-
-                            <label class="upload-box h-52">
-                                <input type="file" accept="image/*" onchange="handleUpload(this)">
-                                <img>
-                                <div class="placeholder">
-                                    <div class="plus">+</div>
-                                    <div class="label">DETAIL 1</div>
-                                </div>
-                            </label>
-
-                            <label class="upload-box h-52">
-                                <input type="file" accept="image/*" onchange="handleUpload(this)">
-                                <img>
-                                <div class="placeholder">
-                                    <div class="plus">+</div>
-                                    <div class="label">DETAIL 2</div>
-                                </div>
-                            </label>
-
-                            <label class="upload-box h-52">
-                                <input type="file" accept="image/*" onchange="handleUpload(this)">
-                                <img>
-                                <div class="placeholder">
-                                    <div class="plus">+</div>
-                                    <div class="label">DETAIL 3</div>
-                                </div>
-                            </label>
-
-                        </div>
+                    <div>
+                        <input class="text-input" placeholder="Merkmal">
+                        <textarea class="textarea-input" placeholder="Beschreibung"></textarea>
                     </div>
-
                 </div>
 
             </div>
-
-            <div class="merkmale-card">
-
-                <h2>MERKMALE</h2>
-
-                <div class="merkmale-list">
-
-                    <div class="merkmal-item">
-
-                        <div class="merkmal-avatar">
-                            <input type="file" accept="image/*" onchange="handleUpload(this)">
-                            <img>
-                            <div class="plus">+</div>
-                        </div>
-
-                        <div class="merkmal-info">
-                            <input class="text-input" type="text" placeholder="Merkmal">
-                            <textarea class="textarea-input" placeholder="Beschreibung"></textarea>
-                        </div>
-
-                    </div>
-
-                    <div class="merkmal-item">
-
-                        <div class="merkmal-avatar">
-                            <input type="file" accept="image/*" onchange="handleUpload(this)">
-                            <img>
-                            <div class="plus">+</div>
-                        </div>
-
-                        <div class="merkmal-info">
-                            <input class="text-input" type="text" placeholder="Merkmal">
-                            <textarea class="textarea-input" placeholder="Beschreibung"></textarea>
-                        </div>
-
-                    </div>
-
-                    <div class="merkmal-item">
-
-                        <div class="merkmal-avatar">
-                            <input type="file" accept="image/*" onchange="handleUpload(this)">
-                            <img>
-                            <div class="plus">+</div>
-                        </div>
-
-                        <div class="merkmal-info">
-                            <input class="text-input" type="text" placeholder="Merkmal">
-                            <textarea class="textarea-input" placeholder="Beschreibung"></textarea>
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
         </div>
 
     </div>
+</div>
 
-    <script>
+<!-- CROP MODAL -->
+<div id="cropModal">
+    <div>
+        <img id="cropImage">
+        <br><br>
+        <button onclick="applyCrop()">Übernehmen</button>
+        <button onclick="closeCrop()">Abbrechen</button>
+    </div>
+</div>
 
-        function handleUpload(input) {
+<script>
 
-            const file = input.files?.[0];
+let cropper;
+let currentInput;
 
-            if (!file) return;
+function handleUpload(input) {
+    const file = input.files[0];
+    const reader = new FileReader();
 
-            const reader = new FileReader();
+    reader.onload = e => {
+        currentInput = input;
+        document.getElementById('cropModal').style.display = 'flex';
+        const img = document.getElementById('cropImage');
+        img.src = e.target.result;
 
-            reader.onload = function(e) {
+        if (cropper) cropper.destroy();
 
-                const img = input.parentElement.querySelector('img');
+        cropper = new Cropper(img, { viewMode: 1 });
+    };
 
-                if (img) {
-                    img.src = e.target.result;
-                    img.classList.add('visible');
-                }
-            };
+    reader.readAsDataURL(file);
+}
 
-            reader.readAsDataURL(file);
-        }
+function applyCrop() {
+    const canvas = cropper.getCroppedCanvas();
+    const img = currentInput.parentElement.querySelector('img');
+    img.src = canvas.toDataURL();
+    img.classList.add('visible');
+    closeCrop();
+}
 
-        async function generatePNG() {
+function closeCrop() {
+    document.getElementById('cropModal').style.display = 'none';
+    if (cropper) cropper.destroy();
+}
 
-            const element = document.getElementById('capture');
+function resetAll() {
+    document.querySelectorAll('input, textarea').forEach(el => el.value = '');
+    document.querySelectorAll('img').forEach(img => {
+        img.src = '';
+        img.classList.remove('visible');
+    });
+}
 
-            const canvas = await html2canvas(element, {
-                backgroundColor: '#0f1013',
-                scale: 2,
-                useCORS: true
-            });
+async function generatePNG() {
 
-            const finalCanvas = document.createElement('canvas');
+    const el = document.getElementById('capture');
+    el.classList.add('export-mode');
 
-            finalCanvas.width = 1920;
-            finalCanvas.height = 1080;
+    const canvas = await html2canvas(el, { scale: 2 });
 
-            const ctx = finalCanvas.getContext('2d');
+    el.classList.remove('export-mode');
 
-            ctx.fillStyle = '#0f1013';
-            ctx.fillRect(0, 0, 1920, 1080);
+    const out = document.createElement('canvas');
+    out.width = 1920;
+    out.height = 1080;
 
-            ctx.drawImage(canvas, 0, 0, 1920, 1080);
+    const ctx = out.getContext('2d');
+    ctx.fillStyle = '#0f1013';
+    ctx.fillRect(0,0,1920,1080);
+    ctx.drawImage(canvas,0,0,1920,1080);
 
-            const link = document.createElement('a');
+    const name = document.getElementById('familyName').value || 'familie';
 
-            link.download = 'familien-outfit.png';
-            link.href = finalCanvas.toDataURL('image/png');
+    const a = document.createElement('a');
+    a.download = name + '.png';
+    a.href = out.toDataURL();
+    a.click();
+}
 
-            link.click();
-        }
-
-    </script>
+</script>
 
 </body>
 </html>
