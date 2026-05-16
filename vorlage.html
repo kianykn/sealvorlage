@@ -1,249 +1,170 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Familien Outfit</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Familien Outfit</title>
 
-    <!-- HTML2CANVAS -->
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
-    <!-- CROPPERJS -->
-    <link rel="stylesheet" href="https://unpkg.com/cropperjs/dist/cropper.min.css">
-    <script src="https://unpkg.com/cropperjs/dist/cropper.min.js"></script>
+<!-- Cropper -->
+<link rel="stylesheet" href="https://unpkg.com/cropperjs/dist/cropper.min.css">
+<script src="https://unpkg.com/cropperjs/dist/cropper.min.js"></script>
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        body {
-            min-height: 100vh;
-            background-color: #0f1013;
-            color: white;
-            padding: 1.5rem;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            line-height: 1.4;
-        }
+body {
+    min-height: 100vh;
+    background-color: #0f1013;
+    color: white;
+    padding: 1.5rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+}
 
-        .container {
-            max-width: 1280px;
-            margin: 0 auto;
-            border-radius: 1.5rem;
-            border: 1px solid #3f3f46;
-            background-color: #17181d;
-            padding: 1.5rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
-        }
+/* FIX 1: abgeschnittene Schrift */
+body {
+    line-height: 1.4;
+}
 
-        .header {
-            margin-bottom: 1.5rem;
-            border-bottom: 1px solid #3f3f46;
-            padding-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    border-radius: 1.5rem;
+    border: 1px solid #3f3f46;
+    background-color: #17181d;
+    padding: 1.5rem;
+}
 
-        .header h1 {
-            font-size: 2.25rem;
-            font-weight: 700;
-        }
+/* HEADER */
+.header {
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #3f3f46;
+    padding-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+}
 
-        .header-fields {
-            display: flex;
-            gap: 2rem;
-        }
+.header h1 {
+    font-size: 2.25rem;
+    font-weight: 700;
+}
 
-        .header-input,
-        .text-input,
-        .textarea-input {
-            width: 100%;
-            background: rgba(39, 39, 42, 0.8);
-            border: 1px solid #52525b;
-            color: white;
-            border-radius: 0.6rem;
-            padding: 0.6rem 0.8rem;
-            font-size: 0.9rem;
-        }
+/* INPUTS */
+.header-input,
+.text-input,
+.textarea-input {
+    width: 100%;
+    background: rgba(39, 39, 42, 0.8);
+    border: 1px solid #52525b;
+    color: white;
+    border-radius: 0.6rem;
+    padding: 0.6rem 0.8rem;
+}
 
-        .header-input { width: 10rem; }
+/* BUTTONS */
+.generate-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
 
-        .textarea-input {
-            resize: vertical;
-            min-height: 70px;
-        }
+.generate-btn {
+    background: white;
+    color: black;
+    padding: 0.9rem 1.4rem;
+    border-radius: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+}
 
-        .generate-wrapper {
-            display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
+/* GRID */
+.looks-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
 
-        .generate-btn {
-            background: white;
-            color: black;
-            border: none;
-            padding: 0.9rem 1.4rem;
-            border-radius: 0.8rem;
-            font-weight: 700;
-            cursor: pointer;
-        }
+/* UPLOAD BOX */
+.upload-box {
+    position: relative;
+    border-radius: 1rem;
+    border: 1px solid #3f3f46;
+    background-color: rgba(39,39,42,0.7);
+    height: 20rem;
+    overflow: hidden;
+}
 
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.25rem;
-        }
+/* + FIX (Punkt 1 Problem) */
+.upload-box .plus {
+    font-size: 3rem;
+    font-weight: 700;
+}
 
-        @media (min-width: 1024px) {
-            .main-grid {
-                grid-template-columns: 3fr 1fr;
-            }
-        }
+/* IMAGE */
+.upload-box img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+}
 
-        .looks-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
+.upload-box img.visible {
+    display: block;
+}
 
-        .upload-box {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 1rem;
-            border: 1px solid #3f3f46;
-            background-color: rgba(39, 39, 42, 0.7);
-            cursor: pointer;
-            overflow: hidden;
-            height: 20rem;
-        }
+/* PLACEHOLDER */
+.placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    color: #d4d4d8;
+}
 
-        .upload-box.h-52 {
-            height: 13rem;
-        }
+/* FIX EXPORT TEXT ONLY */
+.export-mode input,
+.export-mode textarea {
+    display: none !important;
+}
 
-        .upload-box input {
-            position: absolute;
-            inset: 0;
-            opacity: 0;
-            cursor: pointer;
-        }
+/* CROPPER FIX */
+#cropModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
 
-        .upload-box img {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
-        }
+#cropModal > div {
+    background: #111;
+    padding: 1rem;
+    border-radius: 10px;
+    max-width: 90%;
+}
 
-        .upload-box img.visible {
-            display: block;
-        }
-
-        .placeholder {
-            z-index: 2;
-            text-align: center;
-            color: #d4d4d8;
-        }
-
-        .bottom-section {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.25rem;
-        }
-
-        @media (min-width: 768px) {
-            .bottom-section {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        .card, .merkmale-card {
-            border-radius: 1rem;
-            border: 1px solid #3f3f46;
-            background-color: rgba(39, 39, 42, 0.4);
-            padding: 1.25rem;
-        }
-
-        .merkmale-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .merkmal-item {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .merkmal-avatar {
-            width: 5rem;
-            height: 5rem;
-            border-radius: 50%;
-            overflow: hidden;
-            position: relative;
-            border: 1px solid #52525b;
-        }
-
-        .merkmal-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
-        }
-
-        .merkmal-avatar img.visible {
-            display: block;
-        }
-
-        .merkmal-avatar input {
-            position: absolute;
-            inset: 0;
-            opacity: 0;
-        }
-
-        /* EXPORT FIX */
-        .export-mode input,
-        .export-mode textarea {
-            display: none !important;
-        }
-
-        /* Crop Modal */
-        #cropModal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.8);
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-
-        #cropModal > div {
-            background: #111;
-            padding: 1rem;
-            border-radius: 10px;
-        }
-
-        #cropImage {
-            max-width: 500px;
-        }
-    </style>
+#cropImage {
+    max-width: 500px;
+}
+</style>
 </head>
 
 <body>
 
+<!-- FIX 4: RESET BUTTON -->
 <div class="generate-wrapper">
     <button class="generate-btn" onclick="resetAll()">RESET</button>
     <button class="generate-btn" onclick="generatePNG()">PNG GENERIEREN</button>
@@ -251,95 +172,41 @@
 
 <div class="container" id="capture">
 
-    <div class="header">
-        <h1>FAMILIEN OUTFIT</h1>
+<!-- FIX 6: Subtitle weg -->
+<div class="header">
+    <h1>FAMILIEN OUTFIT</h1>
 
-        <div class="header-fields">
-            <input class="header-input" id="familyName" placeholder="Familienname">
-            <input class="header-input" placeholder="Farbschema">
-        </div>
-    </div>
-
-    <div class="main-grid">
-
-        <div>
-
-            <div class="looks-grid">
-
-                <label class="upload-box">
-                    <input type="file" onchange="handleUpload(this)">
-                    <img>
-                    <div class="placeholder">LOOK 1</div>
-                </label>
-
-                <label class="upload-box">
-                    <input type="file" onchange="handleUpload(this)">
-                    <img>
-                    <div class="placeholder">LOOK 2</div>
-                </label>
-
-                <label class="upload-box">
-                    <input type="file" onchange="handleUpload(this)">
-                    <img>
-                    <div class="placeholder">LOOK 3</div>
-                </label>
-
-            </div>
-
-            <div class="bottom-section">
-
-                <div class="card">
-                    <input class="text-input" placeholder="Pflichtteile">
-                    <input class="text-input" placeholder="Farbschema">
-                    <textarea class="textarea-input" placeholder="Regeln"></textarea>
-                </div>
-
-                <div class="card">
-                    <h2>DETAILS</h2>
-                    <label class="upload-box h-52">
-                        <input type="file" onchange="handleUpload(this)">
-                        <img>
-                        <div class="placeholder">DETAIL</div>
-                    </label>
-                </div>
-
-            </div>
-        </div>
-
-        <div class="merkmale-card">
-            <h2>MERKMALE</h2>
-
-            <div class="merkmale-list">
-
-                <div class="merkmal-item">
-                    <div class="merkmal-avatar">
-                        <input type="file" onchange="handleUpload(this)">
-                        <img>
-                    </div>
-                    <div>
-                        <input class="text-input" placeholder="Merkmal">
-                        <textarea class="textarea-input" placeholder="Beschreibung"></textarea>
-                    </div>
-                </div>
-
-                <div class="merkmal-item">
-                    <div class="merkmal-avatar">
-                        <input type="file" onchange="handleUpload(this)">
-                        <img>
-                    </div>
-                    <div>
-                        <input class="text-input" placeholder="Merkmal">
-                        <textarea class="textarea-input" placeholder="Beschreibung"></textarea>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
+    <div>
+        <input id="familyName" class="header-input" placeholder="Familienname">
+        <input class="header-input" placeholder="Farbschema">
     </div>
 </div>
 
-<!-- CROP MODAL -->
+<div class="looks-grid">
+
+    <label class="upload-box">
+        <input type="file" accept="image/*" onchange="handleUpload(this)">
+        <img>
+        <div class="placeholder"><div class="plus">+</div>LOOK 1</div>
+    </label>
+
+    <label class="upload-box">
+        <input type="file" accept="image/*" onchange="handleUpload(this)">
+        <img>
+        <div class="placeholder"><div class="plus">+</div>LOOK 2</div>
+    </label>
+
+    <label class="upload-box">
+        <input type="file" accept="image/*" onchange="handleUpload(this)">
+        <img>
+        <div class="placeholder"><div class="plus">+</div>LOOK 3</div>
+    </label>
+
+</div>
+
+</div>
+
+<!-- CROPPER MODAL -->
 <div id="cropModal">
     <div>
         <img id="cropImage">
@@ -354,29 +221,44 @@
 let cropper;
 let currentInput;
 
+/* FIX 2 + + ICON bleibt erhalten + Crop Button */
 function handleUpload(input) {
+
     const file = input.files[0];
+    if (!file) return;
+
     const reader = new FileReader();
 
     reader.onload = e => {
+
         currentInput = input;
-        document.getElementById('cropModal').style.display = 'flex';
+
+        const modal = document.getElementById('cropModal');
         const img = document.getElementById('cropImage');
+
         img.src = e.target.result;
+        modal.style.display = 'flex';
 
         if (cropper) cropper.destroy();
 
-        cropper = new Cropper(img, { viewMode: 1 });
+        cropper = new Cropper(img, {
+            viewMode: 1,
+            autoCropArea: 1
+        });
     };
 
     reader.readAsDataURL(file);
 }
 
 function applyCrop() {
+
     const canvas = cropper.getCroppedCanvas();
+
     const img = currentInput.parentElement.querySelector('img');
-    img.src = canvas.toDataURL();
+
+    img.src = canvas.toDataURL('image/png');
     img.classList.add('visible');
+
     closeCrop();
 }
 
@@ -385,6 +267,7 @@ function closeCrop() {
     if (cropper) cropper.destroy();
 }
 
+/* FIX 4 RESET */
 function resetAll() {
     document.querySelectorAll('input, textarea').forEach(el => el.value = '');
     document.querySelectorAll('img').forEach(img => {
@@ -393,12 +276,18 @@ function resetAll() {
     });
 }
 
+/* FIX 3 + 5 PNG EXPORT */
 async function generatePNG() {
 
     const el = document.getElementById('capture');
+
     el.classList.add('export-mode');
 
-    const canvas = await html2canvas(el, { scale: 2 });
+    const canvas = await html2canvas(el, {
+        backgroundColor: '#0f1013',
+        scale: 2,
+        useCORS: true
+    });
 
     el.classList.remove('export-mode');
 
@@ -407,6 +296,7 @@ async function generatePNG() {
     out.height = 1080;
 
     const ctx = out.getContext('2d');
+
     ctx.fillStyle = '#0f1013';
     ctx.fillRect(0,0,1920,1080);
     ctx.drawImage(canvas,0,0,1920,1080);
@@ -415,7 +305,7 @@ async function generatePNG() {
 
     const a = document.createElement('a');
     a.download = name + '.png';
-    a.href = out.toDataURL();
+    a.href = out.toDataURL('image/png');
     a.click();
 }
 
