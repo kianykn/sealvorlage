@@ -1,464 +1,294 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Weapon Logistic Dashboard</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Weapon Logistic Dashboard</title>
 
-  <style>
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family:Arial, Helvetica, sans-serif;
-    }
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial;
+}
 
-    body{
-      background:#0f172a;
-      color:white;
-      min-height:100vh;
-    }
+body{
+  background:#000;
+  color:white;
+}
 
-    /* STARTSEITE */
+/* START */
+.start-page{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  gap:30px;
+}
 
-    .start-page{
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      align-items:center;
-      height:100vh;
-      gap:30px;
-    }
+.title{
+  font-size:48px;
+  color:#ff0000;
+  text-shadow:0 0 20px #ff000055;
+}
 
-    .title{
-      font-size:48px;
-      font-weight:bold;
-      color:#38bdf8;
-      text-shadow:0 0 20px rgba(56,189,248,0.4);
-    }
+.menu button{
+  padding:16px 28px;
+  border:none;
+  border-radius:12px;
+  background:#111;
+  color:white;
+  font-size:18px;
+  cursor:pointer;
+  transition:0.2s;
+  min-width:220px;
+}
 
-    .menu{
-      display:flex;
-      gap:20px;
-      flex-wrap:wrap;
-      justify-content:center;
-    }
+.menu button:hover{
+  background:#ff0000;
+}
 
-    .menu button{
-      padding:16px 28px;
-      border:none;
-      border-radius:12px;
-      background:#1e293b;
-      color:white;
-      font-size:18px;
-      cursor:pointer;
-      transition:0.2s;
-      min-width:220px;
-    }
+/* DASHBOARD */
+.dashboard{
+  display:none;
+  height:100vh;
+  padding:20px;
+  gap:20px;
+}
 
-    .menu button:hover{
-      background:#38bdf8;
-      transform:translateY(-3px);
-    }
+.left,.right{
+  background:#111;
+  border-radius:16px;
+  padding:20px;
+  overflow-y:auto;
+}
 
-    .disabled{
-      opacity:0.4;
-      cursor:not-allowed !important;
-    }
+.left{width:66%}
+.right{width:34%}
 
-    /* DASHBOARD */
+h2{
+  color:#ff0000;
+}
 
-    .dashboard{
-      display:none;
-      height:100vh;
-      padding:20px;
-      gap:20px;
-    }
+.search{
+  width:100%;
+  padding:12px;
+  background:#000;
+  border:1px solid #ff0000;
+  color:white;
+  border-radius:10px;
+}
 
-    .left{
-      width:66%;
-      background:#111827;
-      border-radius:16px;
-      padding:20px;
-      overflow-y:auto;
-    }
+table{
+  width:100%;
+  border-collapse:collapse;
+}
 
-    .right{
-      width:34%;
-      background:#111827;
-      border-radius:16px;
-      padding:20px;
-      overflow-y:auto;
-    }
+th,td{
+  padding:12px;
+  border-bottom:1px solid #222;
+}
 
-    .dashboard h2{
-      margin-bottom:20px;
-      color:#38bdf8;
-    }
+th{
+  color:#ff0000;
+}
 
-    .topbar{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom:20px;
-      gap:20px;
-    }
+input{
+  width:70px;
+  background:#000;
+  border:1px solid #ff0000;
+  color:white;
+  padding:6px;
+  border-radius:6px;
+}
 
-    .search{
-      width:100%;
-      padding:12px;
-      border:none;
-      border-radius:10px;
-      background:#1e293b;
-      color:white;
-      font-size:16px;
-    }
+.summary-box{
+  margin-top:20px;
+  padding:12px;
+  background:#000;
+  border:1px solid #ff0000;
+  border-radius:12px;
+}
 
-    table{
-      width:100%;
-      border-collapse:collapse;
-    }
+button{
+  cursor:pointer;
+}
 
-    th, td{
-      padding:14px;
-      text-align:left;
-      border-bottom:1px solid #1e293b;
-    }
+.back-btn,.reset-btn{
+  padding:10px 14px;
+  border:none;
+  border-radius:10px;
+  margin-bottom:10px;
+}
 
-    th{
-      color:#38bdf8;
-      background:#0f172a;
-      position:sticky;
-      top:0;
-    }
+.back-btn{
+  background:#ff0000;
+  color:white;
+}
 
-    input[type="number"]{
-      width:80px;
-      padding:8px;
-      border:none;
-      border-radius:8px;
-      background:#1e293b;
-      color:white;
-    }
+.reset-btn{
+  background:#222;
+  color:white;
+  margin-left:10px;
+}
 
-    .summary-box{
-      background:#0f172a;
-      padding:16px;
-      border-radius:12px;
-      margin-top:20px;
-    }
+.reset-btn:hover{
+  background:#ff0000;
+}
 
-    .summary-box h3{
-      margin-bottom:10px;
-      color:#38bdf8;
-    }
-
-    .back-btn{
-      margin-bottom:20px;
-      padding:10px 16px;
-      border:none;
-      border-radius:10px;
-      background:#38bdf8;
-      color:black;
-      font-weight:bold;
-      cursor:pointer;
-    }
-
-    .empty{
-      opacity:0.6;
-      margin-top:10px;
-    }
-
-    @media(max-width:1100px){
-      .dashboard{
-        flex-direction:column;
-      }
-
-      .left,
-      .right{
-        width:100%;
-        height:auto;
-      }
-    }
-  </style>
+</style>
 </head>
+
 <body>
 
-  <!-- STARTSEITE -->
-  <div class="start-page" id="startPage">
-    <div class="title">Weapon Logistic Dashboard</div>
+<div class="start-page" id="startPage">
+  <div class="title">Weapon Logistic Dashboard</div>
 
-    <div class="menu">
-      <button onclick="openDashboard()">
-        Produktionsrechner
-      </button>
+  <div class="menu">
+    <button onclick="openDashboard()">Produktionsrechner</button>
+  </div>
+</div>
 
-      <button class="disabled">
-        Lagerverwaltung
-      </button>
+<div class="dashboard" id="dashboard">
 
-      <button class="disabled">
-        Mitarbeiter
-      </button>
+<div class="left">
+  <button class="back-btn" onclick="goBack()">← Zurück</button>
+  <button class="reset-btn" onclick="resetAll()">Reset</button>
 
-      <button class="disabled">
-        Statistiken
-      </button>
-    </div>
+  <h2>Produkte</h2>
+
+  <input class="search" id="search" placeholder="Suche..." onkeyup="renderProducts()">
+
+  <table>
+    <thead>
+      <tr>
+        <th>Produkt</th>
+        <th>Zeit</th>
+        <th>Rohstoffe</th>
+        <th>Menge</th>
+      </tr>
+    </thead>
+    <tbody id="productTable"></tbody>
+  </table>
+</div>
+
+<div class="right">
+  <h2>Auswahl</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Produkt</th>
+        <th>Menge</th>
+        <th>Zeit</th>
+      </tr>
+    </thead>
+    <tbody id="selectedTable"></tbody>
+  </table>
+
+  <div class="summary-box">
+    <h3>Rohstoffe</h3>
+    <div id="materials"></div>
   </div>
 
-  <!-- DASHBOARD -->
-  <div class="dashboard" id="dashboard">
-
-    <!-- LINKS -->
-    <div class="left">
-
-      <button class="back-btn" onclick="goBack()">
-        ← Zurück
-      </button>
-
-      <div class="topbar">
-        <h2>Produktliste</h2>
-
-        <input
-          type="text"
-          id="search"
-          class="search"
-          placeholder="Produkt suchen..."
-          onkeyup="renderProducts()"
-        />
-      </div>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Produkt</th>
-            <th>Produktionszeit</th>
-            <th>Rohstoffe</th>
-            <th>Anzahl</th>
-          </tr>
-        </thead>
-
-        <tbody id="productTable"></tbody>
-      </table>
-    </div>
-
-    <!-- RECHTS -->
-    <div class="right">
-      <h2>Ausgewählte Produkte</h2>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Produkt</th>
-            <th>Menge</th>
-            <th>Zeit</th>
-          </tr>
-        </thead>
-
-        <tbody id="selectedTable"></tbody>
-      </table>
-
-      <div class="summary-box">
-        <h3>Benötigte Rohstoffe</h3>
-        <div id="materials"></div>
-      </div>
-
-      <div class="summary-box">
-        <h3>Gesamtzeit</h3>
-        <div id="totalTime"></div>
-      </div>
-    </div>
-
+  <div class="summary-box">
+    <h3>Zeit</h3>
+    <div id="totalTime"></div>
   </div>
+</div>
 
-  <script>
-    const products = [
-      {name:"Magazin", time:3, materials:{Kupfer:1}},
-      {name:"Tazer", time:70, materials:{Eisen:5}},
-      {name:"Schutzweste", time:10, materials:{Fasern:5}},
-      {name:"Erweitertes Magazin", time:15, materials:{Kupfer:8}},
-      {name:"PDW", time:125, materials:{Eisen:15}},
-      {name:"Taschenlampe", time:15, materials:{Kupfer:5}},
-      {name:"SMG", time:125, materials:{Eisen:20, Platin:20}},
-      {name:"Schalldämpfer", time:100, materials:{Kupfer:5}},
-      {name:"Griff", time:15, materials:{Eisen:15}},
-      {name:"Zielfernrohr", time:15, materials:{Kupfer:15}},
-      {name:"Sniper", time:1800, materials:{Kupfer:40, Eisen:40}},
-      {name:"Pumpgun", time:150, materials:{Kupfer:15, Eisen:15}},
-      {name:"Messer", time:60, materials:{Kupfer:5, Eisen:3}},
-      {name:"Fallschirm", time:95, materials:{Fasern:10}},
-      {name:"Spezialkarabiner Mk2", time:120, materials:{Eisen:20, Platin:20}},
-      {name:"Kampfpistole", time:95, materials:{Eisen:20, Platin:10}},
-      {name:"Kampf SMG", time:125, materials:{Eisen:20, Platin:20}},
-      {name:"Revolver", time:60, materials:{Eisen:20, Platin:30}},
-      {name:"Beanbag", time:125, materials:{Eisen:40, Platin:40}},
-      {name:"Leuchtpistole", time:5, materials:{Eisen:20, Platin:20}},
-      {name:"Schlagstock", time:5, materials:{Kupfer:5}},
-      {name:"Schaufel", time:125, materials:{Kupfer:5}},
-      {name:"Dienstgewehr", time:1800, materials:{Eisen:20, Platin:20}},
-      {name:"Taschenlampe Aufsatz", time:15, materials:{}},
-      {name:"Sniper Magazin", time:5, materials:{Kupfer:2}}
-    ];
+</div>
 
-    let selected = {};
+<script>
+const products = [
+{name:"Magazin", time:3, materials:{Kupfer:1}},
+{name:"Tazer", time:70, materials:{Eisen:5}},
+{name:"Schutzweste", time:10, materials:{Fasern:5}},
+{name:"Erweitertes Magazin", time:15, materials:{Kupfer:8}},
+{name:"PDW", time:125, materials:{Eisen:15}},
+{name:"SMG", time:125, materials:{Eisen:20, Platin:20}},
+{name:"Sniper", time:1800, materials:{Kupfer:40, Eisen:40}}
+];
 
-    function openDashboard(){
-      document.getElementById("startPage").style.display = "none";
-      document.getElementById("dashboard").style.display = "flex";
-      renderProducts();
-    }
+let selected = {};
 
-    function goBack(){
-      document.getElementById("dashboard").style.display = "none";
-      document.getElementById("startPage").style.display = "flex";
-    }
+function openDashboard(){
+document.getElementById("startPage").style.display="none";
+document.getElementById("dashboard").style.display="flex";
+renderProducts();
+renderSummary();
+}
 
-    function formatTime(seconds){
+function goBack(){
+document.getElementById("dashboard").style.display="none";
+document.getElementById("startPage").style.display="flex";
+}
 
-      let h = Math.floor(seconds / 3600);
-      let m = Math.floor((seconds % 3600) / 60);
-      let s = seconds % 60;
+function resetAll(){
+selected = {};
+document.querySelectorAll("input").forEach(i=>i.value=0);
+renderSummary();
+renderProducts();
+}
 
-      let parts = [];
+function formatTime(s){
+let m=Math.floor(s/60);
+let sec=s%60;
+return (m?m+"m ":"")+sec+"s";
+}
 
-      if(h > 0) parts.push(h + "h");
-      if(m > 0) parts.push(m + "m");
-      if(s > 0 || parts.length === 0) parts.push(s + "s");
+function renderProducts(){
+const search=document.getElementById("search").value.toLowerCase();
+const table=document.getElementById("productTable");
+table.innerHTML="";
 
-      return parts.join(" ");
-    }
+products.filter(p=>p.name.toLowerCase().includes(search)).forEach(p=>{
+let mat=Object.entries(p.materials).map(x=>x[1]+"x "+x[0]).join(" + ");
 
-    function renderProducts(){
+table.innerHTML+=`
+<tr>
+<td>${p.name}</td>
+<td>${formatTime(p.time)}</td>
+<td>${mat}</td>
+<td><input type="number" min="0" value="${selected[p.name]||0}" onchange="set('${p.name}',this.value)"></td>
+</tr>`;
+});
+}
 
-      const table = document.getElementById("productTable");
-      const search = document.getElementById("search").value.toLowerCase();
+function set(name,val){
+val=parseInt(val);
+if(!val||val<=0) delete selected[name];
+else selected[name]=val;
+renderSummary();
+}
 
-      table.innerHTML = "";
+function renderSummary(){
+let sel=document.getElementById("selectedTable");
+let matDiv=document.getElementById("materials");
+let timeDiv=document.getElementById("totalTime");
 
-      products
-        .filter(p => p.name.toLowerCase().includes(search))
-        .forEach(product => {
+sel.innerHTML="";
+let mats={};
+let max=0;
 
-        const row = document.createElement("tr");
+for(let n in selected){
+let p=products.find(x=>x.name==n);
+let t=p.time*selected[n];
+if(t>max) max=t;
 
-        const materialText = Object.entries(product.materials)
-          .map(([name, amount]) => `${amount}x ${name}`)
-          .join(" + ") || "-";
+sel.innerHTML+=`<tr><td>${n}</td><td>${selected[n]}</td><td>${formatTime(t)}</td></tr>`;
 
-        row.innerHTML = `
-          <td>${product.name}</td>
-          <td>${formatTime(product.time)}</td>
-          <td>${materialText}</td>
-          <td>
-            <input
-              type="number"
-              min="0"
-              value="${selected[product.name] || 0}"
-              onchange="updateSelection('${product.name}', this.value)"
-            />
-          </td>
-        `;
+for(let m in p.materials){
+mats[m]=(mats[m]||0)+p.materials[m]*selected[n];
+}
+}
 
-        table.appendChild(row);
-      });
-    }
-
-    function updateSelection(productName, amount){
-
-      amount = parseInt(amount);
-
-      if(amount <= 0 || isNaN(amount)){
-        delete selected[productName];
-      } else {
-        selected[productName] = amount;
-      }
-
-      renderSummary();
-    }
-
-    function renderSummary(){
-
-      const selectedTable = document.getElementById("selectedTable");
-      const materialsDiv = document.getElementById("materials");
-      const totalTimeDiv = document.getElementById("totalTime");
-
-      selectedTable.innerHTML = "";
-
-      let totalMaterials = {};
-      let longestTime = 0;
-
-      const entries = Object.entries(selected);
-
-      if(entries.length === 0){
-
-        selectedTable.innerHTML = `
-          <tr>
-            <td colspan="3" class="empty">
-              Keine Produkte ausgewählt
-            </td>
-          </tr>
-        `;
-
-        materialsDiv.innerHTML = "Keine Rohstoffe benötigt";
-        totalTimeDiv.innerHTML = "0s";
-
-        return;
-      }
-
-      entries.forEach(([name, amount]) => {
-
-        const product = products.find(p => p.name === name);
-
-        // PRODUKTZEIT (gleiche Produkte nacheinander)
-        const productTime = product.time * amount;
-
-        // GLEICHZEITIG PRODUKTION:
-        // Nur das längste Produkt zählt
-        if(productTime > longestTime){
-          longestTime = productTime;
-        }
-
-        const row = document.createElement("tr");
-
-        row.innerHTML = `
-          <td>${name}</td>
-          <td>${amount}</td>
-          <td>${formatTime(productTime)}</td>
-        `;
-
-        selectedTable.appendChild(row);
-
-        // MATERIALIEN
-        Object.entries(product.materials).forEach(([mat, qty]) => {
-
-          if(!totalMaterials[mat]){
-            totalMaterials[mat] = 0;
-          }
-
-          totalMaterials[mat] += qty * amount;
-        });
-      });
-
-      materialsDiv.innerHTML = "";
-
-      Object.entries(totalMaterials).forEach(([mat, qty]) => {
-
-        const div = document.createElement("div");
-        div.style.marginBottom = "8px";
-
-        div.innerHTML = `${qty}x ${mat}`;
-
-        materialsDiv.appendChild(div);
-      });
-
-      totalTimeDiv.innerHTML = `
-        ${formatTime(longestTime)}
-      `;
-    }
-
-    renderSummary();
-  </script>
+matDiv.innerHTML=Object.entries(mats).map(x=>x[1]+"x "+x[0]).join("<br>")||"Keine";
+timeDiv.innerHTML=formatTime(max)||"0s";
+}
+</script>
 
 </body>
 </html>
